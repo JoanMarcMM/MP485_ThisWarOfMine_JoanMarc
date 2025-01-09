@@ -12,15 +12,15 @@ public class Ubicacion {
     
     //Atributos
     private ArrayList <Objeto> loot = new ArrayList<Objeto>();
-    private int peligrosidad;
+    private int difficulty;
     //Extra mio
-    private String tipo;
+    private String type;
     
 
-    public Ubicacion(int turno) {
-        this.peligrosidad=(int)Math.floor(Math.random()*turno)+1;
-        this.loot=generarLoot(turno);
-        this.tipo=generarTipo();
+    public Ubicacion(int turn) {
+        this.difficulty=(int)Math.floor(Math.random()*turn)+1;
+        this.loot=generarLoot(turn);
+        this.type=generateType();
     }
     
     
@@ -34,27 +34,27 @@ public class Ubicacion {
         this.loot = loot;
     }
 
-    public int getPeligrosidad() {
-        return peligrosidad;
+    public int getDifficulty() {
+        return difficulty;
     }
 
-    public void setPeligrosidad(int peligrosidad) {
-        this.peligrosidad = peligrosidad;
+    public void setDifficulty(int peligrosidad) {
+        this.difficulty = peligrosidad;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getType() {
+        return type;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setType(String type) {
+        this.type = type;
     }
     
     
     
     //Funciones
     
-    public ArrayList <Objeto> generarLoot(int turno){
+    public ArrayList <Objeto> generarLoot(int turn){
         
         int num ;
         
@@ -69,7 +69,7 @@ public class Ubicacion {
         Objeto componente= new Objeto("COMPONENTE",1);
         loot.add(componente);
         
-        int cantidad= (int)(Math.floor(Math.random()*10)+1)-turno;
+        int cantidad= (int)(Math.floor(Math.random()*10)+1)-turn;
         
         if (cantidad>0){
             for(int n =0; n<cantidad;n++){
@@ -99,7 +99,7 @@ public class Ubicacion {
         return loot;
     }
 
-    public String generarTipo(){
+    public String generateType(){
         
         String tipo;
         

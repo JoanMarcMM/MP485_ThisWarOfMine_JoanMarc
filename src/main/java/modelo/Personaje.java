@@ -14,97 +14,127 @@ import java.util.Scanner;
 public class Personaje {
 
     //Atributos
-    private String nombre;
-    private int salud;
-    private int hambre;
-    private int sueño;
-    private String habilidad;
-    private ArrayList<Objeto> inventario = new ArrayList<Objeto>();
+    private String name;
+    private int health;
+    private int hunger;
+    private int sleep;
+    private String hability;
+    private ArrayList<Objeto> inventory = new ArrayList<Objeto>();
 
     //Constructor
     //Solo pido el nombre y la habilidad ya que los demas atributos son los 
     //mismos en todos los personajes
     public Personaje(String nombre, String habilidad) {
-        this.nombre = nombre;
-        this.habilidad = habilidad;
-        this.salud = 10;
-        this.hambre = 1;
-        this.sueño = 1;
+        this.name = nombre;
+        this.hability = habilidad;
+        this.health = 10;
+        this.hunger = 1;
+        this.sleep = 1;
     }
 
     //Getters and setters
-    public String getNombre() {
-        return nombre;
+
+    public String getName() {
+        return name;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getSalud() {
-        return salud;
+    public int getHealth() {
+        return health;
     }
 
-    public void setSalud(int salud) {
-        this.salud = salud;
+    public void setHealth(int health) {
+        this.health = health;
     }
 
-    public int getHambre() {
-        return hambre;
+    public int getHunger() {
+        return hunger;
     }
 
-    public void setHambre(int hambre) {
-        this.hambre = hambre;
+    public void setHunger(int hunger) {
+        this.hunger = hunger;
     }
 
-    public int getSueño() {
-        return sueño;
+    public int getSleep() {
+        return sleep;
     }
 
-    public void setSueño(int sueño) {
-        this.sueño = sueño;
+    public void setSleep(int sleep) {
+        this.sleep = sleep;
     }
 
-    public String getHabilidad() {
-        return habilidad;
+    public String getHability() {
+        return hability;
     }
 
-    public void setHabilidad(String habilidad) {
-        this.habilidad = habilidad;
+    public void setHability(String hability) {
+        this.hability = hability;
     }
 
-    public ArrayList<Objeto> getInventario() {
-        return inventario;
+    public ArrayList<Objeto> getInventory() {
+        return inventory;
     }
 
-    public void setInventario(ArrayList<Objeto> inventario) {
-        this.inventario = inventario;
+    public void setInventory(ArrayList<Objeto> inventory) {
+        this.inventory = inventory;
     }
+   
 
-    public void dormir() {
+    public void dormir(Casa casa) {
         System.out.println("---------------------------------------------------");
-        System.out.println(nombre + " esta durmiendo. (-2 sueño)");
-        if (sueño > 1) {
-            sueño = sueño - 2;
+        if (casa.isCama() == true) {
+            System.out.println(name + " esta durmiendo mejor gracias a la cama. (-3 sueño)");
+            if (sleep > 2) {
+                sleep = sleep - 3;
+            } else {
+                sleep = 0;
+            }
         } else {
-            sueño = 0;
+            System.out.println(name + " esta durmiendo. (-2 sueño)");
+            if (sleep > 1) {
+                sleep = sleep - 2;
+            } else {
+                sleep = 0;
+            }
         }
+
         System.out.println("---------------------------------------------------");
     }
 
-    public void vigilar() {
+    public void vigilar(Casa casa) {
 
         System.out.println("---------------------------------------------------");
-        System.out.println(nombre + " esta vigilando. (+1 sueño)");
-        sueño = sueño + 1;
+        System.out.println(name + " esta vigilando. (+1 sueño)");
+        sleep = sleep + 1;
 
         int num = (int) Math.floor(Math.random() * 51);
 
         if (num >= 0 && num <= 5) {
             System.out.println("ATENCION! ");
             System.out.println("Evento: ASALTO");
-            System.out.println("Ha habido un asalto a la casa y " + nombre + " ha salido herido. (-2 salud).");
-            salud = salud - 2;
+
+            boolean haveWeapon = false;
+            for (Objeto objeto : casa.getAlmacen()) {
+                if (objeto.getTipo().equalsIgnoreCase("ARMA") && objeto.getCantidad() > 0) {
+                    haveWeapon=true;
+                    objeto.setCantidad(objeto.getCantidad()-1);
+                }
+            }
+            
+            if(haveWeapon==true){
+            System.out.println("Ha habido un asalto a la casa y " + name + " ha defendido la casa.");
+            System.out.println(name + " ha usado una arma para defenderse y se ha roto. (-1 Arma)");
+            System.out.println("Gracias a la arma " + name + " no ha salido herido.");    
+            }
+            else{
+            System.out.println("Ha habido un asalto a la casa y " + name + " ha defendido la casa.");
+            System.out.println(name + " ha salido herido al no tener arma. (-2 Salud)");
+            health = health - 2; 
+            }
+            
         }
 
         if (num >= 40 && num <= 50) {
@@ -112,20 +142,20 @@ public class Personaje {
             System.out.println("Evento: COMERCIANTE");
 
             //HABILIDAD ELOCUENCIA
-            if (habilidad.equalsIgnoreCase("ELOCUENCIA")) {
-                System.out.println("Un comerciante ha pasado por vuestra casa y " + nombre + " ha usado su elocuencia y le ha comprado 3 de comida y 3 de componentes.");
+            if (hability.equalsIgnoreCase("ELOCUENCIA")) {
+                System.out.println("Un comerciante ha pasado por vuestra casa y " + name + " ha usado su elocuencia y le ha comprado 3 de comida y 3 de componentes.");
 
                 Objeto comida = new Objeto("COMIDA", 3);
-                inventario.add(comida);
+                inventory.add(comida);
                 Objeto componente = new Objeto("COMPONENTE", 3);
-                inventario.add(componente);
+                inventory.add(componente);
             } else {
-                System.out.println("Un comerciante ha pasado por vuestra casa y " + nombre + " le ha comprado 2 de comida y 2 de componentes.");
+                System.out.println("Un comerciante ha pasado por vuestra casa y " + name + " le ha comprado 2 de comida y 2 de componentes.");
 
                 Objeto comida = new Objeto("COMIDA", 2);
-                inventario.add(comida);
+                inventory.add(comida);
                 Objeto componente = new Objeto("COMPONENTE", 2);
-                inventario.add(componente);
+                inventory.add(componente);
             }
 
         }
@@ -137,16 +167,16 @@ public class Personaje {
         Scanner sc = new Scanner(System.in);
 
         System.out.println("---------------------------------------------------");
-        System.out.println(nombre + " esta explorando. (+2 sueño y +1 hambre)");
-        sueño = sueño + 2;
-        hambre = hambre + 1;
+        System.out.println(name + " esta explorando. (+2 sueño y +1 hambre)");
+        sleep = sleep + 2;
+        hunger = hunger + 1;
         System.out.println("");
 
-        int daño = (int) Math.floor(Math.random() * (ubicacion.getPeligrosidad() + 1));
+        int daño = (int) Math.floor(Math.random() * (ubicacion.getDifficulty() + 1));
         int espacioMochila;
 
         //HABILIDAD RAPIDEZ
-        if (habilidad.equalsIgnoreCase("RAPIDEZ")) {
+        if (hability.equalsIgnoreCase("RAPIDEZ")) {
             espacioMochila = 7;
         } else {
             espacioMochila = 5;
@@ -168,7 +198,7 @@ public class Personaje {
             if (!ubicacion.getLoot().isEmpty()) {
                 if (selec >= 0 && selec < ubicacion.getLoot().size()) {
                     ubicacion.getLoot().get(selec).setCantidad(ubicacion.getLoot().get(selec).getCantidad() - 1);
-                    inventario.add(ubicacion.getLoot().get(selec));
+                    inventory.add(ubicacion.getLoot().get(selec));
                     System.out.println("Objeto añadido.");
                     if (ubicacion.getLoot().get(selec).getCantidad() == 0) {
                         ubicacion.getLoot().remove(selec);
@@ -177,27 +207,26 @@ public class Personaje {
                 espacioMochila--;
             }
         } while (espacioMochila > 0 && !ubicacion.getLoot().isEmpty());
-        
+
         //HABILIDAD SIGILO
-        
-        if (habilidad.equalsIgnoreCase("SIGILO")) {
+        if (hability.equalsIgnoreCase("SIGILO")) {
             if (daño > 0) {
                 if (daño == 1) {
                     daño = 0;
-                    System.out.println("Al lootear la zona " + nombre + " ha sufrido lesiones.");
+                    System.out.println("Al lootear la zona " + name + " ha sufrido lesiones.");
                     System.out.println("Gracias a su sigilo ha sufrido menos daño. (-" + daño + " salud).");
-                    salud = salud - daño;
+                    health = health - daño;
                 } else {
                     daño = daño - 2;
-                    System.out.println("Al lootear la zona " + nombre + " ha sufrido lesiones. (-" + daño + " salud).");
+                    System.out.println("Al lootear la zona " + name + " ha sufrido lesiones. (-" + daño + " salud).");
                     System.out.println("Gracias a su sigilo ha sufrido menos daño. (-" + daño + " salud).");
-                    salud = salud - daño;
+                    health = health - daño;
                 }
             }
         } else {
             if (daño > 0) {
-                System.out.println("Al lootear la zona " + nombre + " ha sufrido lesiones. (-" + daño + " salud).");
-                salud = salud - daño;
+                System.out.println("Al lootear la zona " + name + " ha sufrido lesiones. (-" + daño + " salud).");
+                health = health - daño;
             }
         }
 

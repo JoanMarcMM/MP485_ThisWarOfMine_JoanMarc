@@ -13,6 +13,14 @@ import modelo.Ubicacion;
 /**
  *
  * @author usuario
+ * 
+ * 
+ * Cambios made in Joan Marc
+ * - Las armas son utiles:
+ *      Si se hace un asalto quien este vigilando usara automaticamente una arma para defenderse, de esta manera no perdera salud pero el arma se perdera.
+ * 
+ * - La cama es util: 
+ *      Si hay una cama construida, quien duerma dormira mejor y se le restara 3 de sueño.
  */
 public class ThisWarOfMine {
 
@@ -97,16 +105,16 @@ public class ThisWarOfMine {
 
                 //Solo hago print de los personajes que no esten ya introducidos en la seleccion
                 if (!seleccionPersonajes.contains(0)) {
-                    System.out.println("0 - Arica");
+                    System.out.println("0 - Arica - Habilidad: Sigilo");
                 }
                 if (!seleccionPersonajes.contains(1)) {
-                    System.out.println("1 - Bruno");
+                    System.out.println("1 - Bruno - Habilidad: Cocinero");
                 }
                 if (!seleccionPersonajes.contains(2)) {
-                    System.out.println("2 - Katia");
+                    System.out.println("2 - Katia - Habilidad: Elocuencia");
                 }
                 if (!seleccionPersonajes.contains(3)) {
-                    System.out.println("3 - Pavel");
+                    System.out.println("3 - Pavel - Habilidad: Rapidez");
                 }
                 System.out.println("---------------------------------------------------");
                 System.out.print("Seleccion n." + (n + 1) + " : ");
@@ -147,8 +155,8 @@ public class ThisWarOfMine {
             Ubicacion ubicacion = generarUbicacion(turno);
 
             //Muestro el tipo , la peligrosidad y los objetos que puedes encontrar
-            System.out.println("Ubicacion a explorar: " + ubicacion.getTipo());
-            System.out.println("Nivel de la ubicacion: " + ubicacion.getPeligrosidad());
+            System.out.println("Ubicacion a explorar: " + ubicacion.getType());
+            System.out.println("Nivel de la ubicacion: " + ubicacion.getDifficulty());
             System.out.println("Loot de la ubicacion: ");
             for (Objeto objeto : ubicacion.getLoot()) {
                 System.out.println(objeto.toString());
@@ -169,8 +177,8 @@ public class ThisWarOfMine {
         //En caso de que algun personaje haya muerto , recorro todos los personajes con un for
         //y el personaje que tenga menos o 0 de vida saldra en un mensaje anunciano su muerte.
         for (Personaje personaje : personajes) {
-            if (personaje.getSalud() <= 0) {
-                System.out.println(personaje.getNombre() + " ha muerto.");
+            if (personaje.getHealth() <= 0) {
+                System.out.println(personaje.getName() + " ha muerto.");
             }
         }
         System.out.println("La partida ha finalizado.");
@@ -184,7 +192,7 @@ public class ThisWarOfMine {
         //Recorro el array de jugadores y voy personaje por personaje mirando su salud,
         //si alguno tiene 0 o menos de salud el boolean se vuelve true.
         for (Personaje personaje : personajes) {
-            if (personaje.getSalud() <= 0) {
+            if (personaje.getHealth() <= 0) {
                 personajeMuerto = true;
             }
         }
@@ -222,7 +230,7 @@ public class ThisWarOfMine {
         System.out.println("---------------------------------------------------");
         System.out.println("Selecciona los roles de cada personaje:");
         for (int n = 0; n < 3; n++) {
-            System.out.println(n + " - " + personajes.get(n).getNombre());
+            System.out.println(n + " - " + personajes.get(n).getName());
         }
 
         //Hago bucles para cada pregunta por si mp se introduce una opcion valida
@@ -272,8 +280,8 @@ public class ThisWarOfMine {
 
         //Llamo a la funcion que cada personaje tiene que llevar a cabo
         System.out.println("---------------------------------------------------");
-        roles.get(0).dormir();
-        roles.get(1).vigilar();
+        roles.get(0).dormir(casa);
+        roles.get(1).vigilar(casa);
         //En explorar me llevo la ubicacion ya que sera necesaria para cojer el loot.
         roles.get(2).explorar(ubicacion);
 
@@ -289,9 +297,9 @@ public class ThisWarOfMine {
         //Miramos el inventario de cada personaje con un for
         for (Personaje personaje : personajes) {
             //Si el inventario no esta vacio procedemos
-            if (!personaje.getInventario().isEmpty()) {
+            if (!personaje.getInventory().isEmpty()) {
                 //Reccoreemos el inventario objeto por objeto
-                for (Objeto objeto : personaje.getInventario()) {
+                for (Objeto objeto : personaje.getInventory()) {
                     tener = false;
 
                     //Si el objeto ya lo tenemos en el inventario le sumamos a cantidad 1
@@ -309,14 +317,14 @@ public class ThisWarOfMine {
                     }
                 }
                 //Vaciamos el inventario del personaje
-                personaje.getInventario().clear();
+                personaje.getInventory().clear();
 
             }
 
-            personaje.setHambre(personaje.getHambre() + 1);
+            personaje.setHunger(personaje.getHunger() + 1);
 
             //Miramos si el personaje esta muerto o no 
-            if (personaje.getHambre() >= 5 | personaje.getSueño() >= 5) {
+            if (personaje.getHunger() >= 5 | personaje.getSleep() >= 5) {
                 muerto = true;
             }
         }
@@ -339,25 +347,30 @@ public class ThisWarOfMine {
                         }
                     }
 
-                    //Añadir opciones 2,3 y4 . 
-                    //2 y 3: Gatsar 5 componentes a cambio de 2 comida o 1 medicina.
-                    //4: Gastar 1'0 comp a camio de una cama.
+                    //Añadir opciones 2,3 ,4 y5 . 
+                    //2:Gastar 3 de componentes para 1 arma.
+                    //3 y 4: Gatsar 5 componentes a cambio de 2 comida o 1 medicina.
+                    //5: Gastar 6 comp a camio de una cama.
                     if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
-                        if (objeto.getCantidad() >= 5) {
+                        if (objeto.getCantidad() >= 3) {
                             opc = 2;
                             opcionesFinDia.add(opc);
+                        }
+                        if (objeto.getCantidad() >= 5) {
                             opc = 3;
                             opcionesFinDia.add(opc);
-                        }
-                        if (objeto.getCantidad() >= 10) {
                             opc = 4;
                             opcionesFinDia.add(opc);
                         }
+                        if (objeto.getCantidad() >= 6) {
+                            opc = 5;
+                            opcionesFinDia.add(opc);
+                        }
                     }
-
+                    //6: Gastar 1 de medicina para curar
                     if (objeto.getTipo().equalsIgnoreCase("MEDICINA")) {
                         if (objeto.getCantidad() >= 1) {
-                            opc = 5;
+                            opc = 6;
                             opcionesFinDia.add(opc);
 
                         }
@@ -369,7 +382,7 @@ public class ThisWarOfMine {
                 System.out.println("OPCIONES FIN DE DIA:");
                 System.out.println("Estado de los personajes:");
                 for (Personaje personaje : personajes) {
-                    System.out.println(personaje.getNombre() + " -> Salud: " + personaje.getSalud() + ", Hambre: " + personaje.getHambre() + ", Sueño: " + personaje.getSueño());
+                    System.out.println(personaje.getName() + " -> Salud: " + personaje.getHealth() + ", Hambre: " + personaje.getHealth() + ", Sueño: " + personaje.getSleep());
                 }
                 System.out.println("---------------------------------------------------");
                 System.out.println("Selecciona la accion que quieras hacer:");
@@ -378,19 +391,22 @@ public class ThisWarOfMine {
                     System.out.println("1) Comer: Gastar 1 de comida a cambio de disminuir en 1 la hambre de un jugador.");
                 }
                 if (opcionesFinDia.contains(2)) {
-                    System.out.println("2) Generar comida: Gastar 5 componentes a cambio de 2 de comida.");
+                    System.out.println("2) Generar arma: Gastar 3 componentes a cambio de 1 de comida.");
                 }
                 if (opcionesFinDia.contains(3)) {
-                    System.out.println("3) Generar medicina: Gatar 5 componentes a cambio de 1 de medicina.");
+                    System.out.println("3) Generar comida: Gastar 5 componentes a cambio de 2 de comida.");
                 }
                 if (opcionesFinDia.contains(4)) {
-                    System.out.println("4) Gastar 10 componentes a cambio de crear una cama par la casa.");
+                    System.out.println("4) Generar medicina: Gatar 5 componentes a cambio de 1 de medicina.");
                 }
                 if (opcionesFinDia.contains(5)) {
-                    System.out.println("5) Recuperar salud: Gastar 1 de medicina para aumentar en 1 la salud de un jugador.");
+                    System.out.println("5) Gastar 10 componentes a cambio de crear una cama par la casa.");
+                }
+                if (opcionesFinDia.contains(6)) {
+                    System.out.println("6) Recuperar salud: Gastar 1 de medicina para aumentar en 1 la salud de un jugador.");
                 }
 
-                System.out.println("6) Dormir (Empezar el siguiente dia).");
+                System.out.println("7) Dormir (Empezar el siguiente dia).");
 
                 //Pido la opcion y la guardo
                 System.out.print("Seleccion: ");
@@ -403,18 +419,21 @@ public class ThisWarOfMine {
                             restarHambre(personajes);
                             break;
                         case 2:
-                            generarComida();
+                            generarArma();
                             break;
                         case 3:
-                            generarMedicina();
+                            generarComida();
                             break;
                         case 4:
-                            generarCama();
+                            generarMedicina();
                             break;
                         case 5:
-                            recuperarSalud(personajes);
+                            generarCama();
                             break;
                         case 6:
+                            recuperarSalud(personajes);
+                            break;
+                        case 7:
                             System.out.println("FIN DIA");
                             break;
                         default:
@@ -425,28 +444,28 @@ public class ThisWarOfMine {
                 }
                 //Limpio las opciones possibles
                 opcionesFinDia.clear();
-            } while (selec != 6);
+            } while (selec != 7);
         }
         //Recorro los personajes para hacer la actualizacion de fin de dia
         for (Personaje personaje : personajes) {
 
-            if (personaje.getHambre() > 0) {
-                if (personaje.getHambre() >= 5) {
-                System.out.println(personaje.getNombre() + " ha muerto debido al hambre.");
-                personaje.setSalud(personaje.getSalud() - 10);
+            if (personaje.getHunger() > 0) {
+                if (personaje.getHunger() >= 5) {
+                System.out.println(personaje.getName() + " ha muerto debido al hambre.");
+                personaje.setHealth(personaje.getHealth() - 10);
                 break;
                 }
-                personaje.setSalud(personaje.getSalud() - personaje.getHambre());
-                System.out.println(personaje.getNombre() + " ha perdido " + personaje.getHambre() + " puntos de salud debido al hambre.");
+                personaje.setHealth(personaje.getHealth() - personaje.getHunger());
+                System.out.println(personaje.getName() + " ha perdido " + personaje.getHunger() + " puntos de salud debido al hambre.");
             }
-            if (personaje.getSueño() > 1) {
-                if (personaje.getSueño() >= 5) {
-                System.out.println(personaje.getNombre() + " ha muerto debido al sueño.");
-                personaje.setSalud(personaje.getSalud() - 10);
+            if (personaje.getSleep() > 1) {
+                if (personaje.getSleep() >= 5) {
+                System.out.println(personaje.getName() + " ha muerto debido al sueño.");
+                personaje.setHealth(personaje.getHealth() - 10);
                 break;
             }
-                personaje.setSalud(personaje.getSalud() - (int) (Math.floor(personaje.getSueño() / 2)));
-                System.out.println(personaje.getNombre() + " ha perdido " + Math.floor(personaje.getSueño() / 2) + " puntos de salud debido al sueño.");
+                personaje.setHealth(personaje.getHealth() - (int) (Math.floor(personaje.getSleep() / 2)));
+                System.out.println(personaje.getName() + " ha perdido " + Math.floor(personaje.getSleep() / 2) + " puntos de salud debido al sueño.");
             }
             
             
@@ -461,7 +480,7 @@ public class ThisWarOfMine {
         int n = 0;
         Integer selec;
         for (Personaje personaje : personajes) {
-            System.out.println(n + ") " + personaje.getNombre());
+            System.out.println(n + ") " + personaje.getName());
             n++;
         }
         selec = sc.nextInt();
@@ -470,9 +489,9 @@ public class ThisWarOfMine {
             
             //HABILIDAD COCINERO
             
-            if(personajes.get(selec).getHabilidad().equalsIgnoreCase("COCINERO")){
-            personajes.get(selec).setHambre(personajes.get(selec).getHambre() - 2);
-            System.out.println("Gracias a sus habilidades como cocinero a le ha restado 2 de hambre a " + personajes.get(selec).getNombre() + ".");
+            if(personajes.get(selec).getHability().equalsIgnoreCase("COCINERO")){
+            personajes.get(selec).setHunger(personajes.get(selec).getHunger() - 2);
+            System.out.println("Gracias a sus habilidades como cocinero a le ha restado 2 de hambre a " + personajes.get(selec).getName() + ".");
             for (Objeto objeto : casa.getAlmacen()) {
                 if (objeto.getTipo().equalsIgnoreCase("COMIDA")) {
                     objeto.setCantidad(objeto.getCantidad() - 1);
@@ -480,8 +499,8 @@ public class ThisWarOfMine {
             }    
             }
             else{
-            personajes.get(selec).setHambre(personajes.get(selec).getHambre() - 1);
-            System.out.println("Se le ha restado 1 de hambre a " + personajes.get(selec).getNombre() + ".");
+            personajes.get(selec).setHunger(personajes.get(selec).getHunger() - 1);
+            System.out.println("Se le ha restado 1 de hambre a " + personajes.get(selec).getName() + ".");
             for (Objeto objeto : casa.getAlmacen()) {
                 if (objeto.getTipo().equalsIgnoreCase("COMIDA")) {
                     objeto.setCantidad(objeto.getCantidad() - 1);
@@ -492,18 +511,55 @@ public class ThisWarOfMine {
             System.out.println("Seleccion no valdia.");
         }
     }
+    
+    public static void generarArma() {
+
+        System.out.println("Generando arma...");
+        
+        boolean haveGun=false;
+        
+        for (Objeto objeto : casa.getAlmacen()) {
+            if (objeto.getTipo().equalsIgnoreCase("ARMA")) {
+                objeto.setCantidad(objeto.getCantidad() + 1);
+                haveGun=true;
+            }
+            if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
+                objeto.setCantidad(objeto.getCantidad() - 3);
+            }
+        }
+        
+        if(haveGun==false){
+            Objeto objeto= new Objeto("ARMA",1);
+            casa.getAlmacen().add(objeto);
+        }
+
+        System.out.println("Arma generada.");
+        System.out.println("---------------------------------------------------");
+        System.out.println("Objetos en el almacen:");
+        casa.mostrarAlmacen();
+        System.out.println("---------------------------------------------------");
+
+    }
 
     public static void generarComida() {
 
         System.out.println("Generando comida...");
 
+        boolean haveFood=false;
+        
         for (Objeto objeto : casa.getAlmacen()) {
             if (objeto.getTipo().equalsIgnoreCase("COMIDA")) {
                 objeto.setCantidad(objeto.getCantidad() + 2);
+                haveFood=true;
             }
             if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
                 objeto.setCantidad(objeto.getCantidad() - 5);
             }
+        }
+        
+        if(haveFood==false){
+            Objeto objeto= new Objeto("COMIDA",1);
+            casa.getAlmacen().add(objeto);
         }
 
         System.out.println("Comida generada.");
@@ -518,13 +574,21 @@ public class ThisWarOfMine {
 
         System.out.println("Generando medicina...");
 
+        boolean haveMedicine=false;
+        
         for (Objeto objeto : casa.getAlmacen()) {
             if (objeto.getTipo().equalsIgnoreCase("MEDICINA")) {
                 objeto.setCantidad(objeto.getCantidad() + 1);
+                haveMedicine=true;
             }
             if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
                 objeto.setCantidad(objeto.getCantidad() - 5);
             }
+        }
+        
+        if(haveMedicine==false){
+            Objeto objeto= new Objeto("MEDICINA",1);
+            casa.getAlmacen().add(objeto);
         }
 
         System.out.println("Medicina generada.");
@@ -543,7 +607,7 @@ public class ThisWarOfMine {
         casa.setCama(true);
         for (Objeto objeto : casa.getAlmacen()) {
             if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
-                objeto.setCantidad(objeto.getCantidad() - 10);
+                objeto.setCantidad(objeto.getCantidad() - 6);
             }
         }
 
@@ -564,16 +628,16 @@ public class ThisWarOfMine {
         int n = 0;
         Integer selec;
         for (Personaje personaje : personajes) {
-            System.out.println(n + ") " + personaje.getNombre());
+            System.out.println(n + ") " + personaje.getName());
             n++;
         }
         selec = sc.nextInt();
 
         if (selec >= 0 && selec <= 2) {
-            if (personajes.get(selec).getSalud() == 10) {
+            if (personajes.get(selec).getHealth() == 10) {
                 System.out.println("Este personaje ya tiene la salud al maximo.");
             } else {
-                personajes.get(selec).setSalud(personajes.get(selec).getSalud() + 1);
+                personajes.get(selec).setHealth(personajes.get(selec).getHealth() + 1);
             }
         } else {
             System.out.println("Seleccion no valdia.");
