@@ -15,29 +15,35 @@ import modelo.Ubicacion;
  * @author usuario
  *
  *
- * Cambios made by Joan Marc 
- * 
- * - Las armas son utiles: Si se hace un asalto quien
- * este vigilando usara automaticamente una arma para defenderse, de esta manera
- * no perdera salud pero el arma se perdera.
+ * Cambios made by Joan Marc
  *
- * -Si tienes una arma en el almacen en el momento de asignar roles, te aparecera
- * la opcion de darle una a quien vaya a explorar. Si se le da, este ira armado y
- * se podra defender en la zona sufriendo menos daño. Si este mismo personaje al 
- * lootear ha cojido una arma, tambien la utilizara.
- * 
- * -Lo que sube , baja. Al ser mas utiles ,he hecho que las armas tengan un spawn rate de 5% y he 
- * aumentado el de componentes a 50%
- * 
+ * - Las armas son utiles: Si se hace un asalto quien este vigilando usara
+ * automaticamente una arma para defenderse, de esta manera no perdera salud
+ * pero el arma se perdera.
+ *
+ * -Si tienes una arma en el almacen en el momento de asignar roles, te
+ * aparecera la opcion de darle una a quien vaya a explorar. Si se le da, este
+ * ira armado y se podra defender en la zona sufriendo menos daño. Si este mismo
+ * personaje al lootear ha cojido una arma, tambien la utilizara.
+ *
+ * -Lo que sube , baja. Al ser mas utiles ,he hecho que las armas tengan un
+ * spawn rate de 5% y he aumentado el de componentes a 50%
+ *
  * - La cama es util: Si hay una cama construida, quien duerma ,dormira mejor, y
  * se le restara 3 de sueño.
- * 
- * Nuevo personaje Mario: Habilidad mercenario. Si esta vigilando y atacan, luchara
- * contra los enemigos y terminara con ellos, asi quedandose con su loot. Tambien tiene experiencia en
- * crear armas y por lo tanto crearlas a partir de componentes costara 1 menos.
  *
+ * - Nuevo personaje Mario: Habilidad mercenario. Si esta vigilando y atacan,
+ * luchara contra los enemigos y terminara con ellos, asi quedandose con su
+ * loot. Tambien tiene experiencia en crear armas y por lo tanto crearlas a
+ * partir de componentes costara 1 menos.
  * 
+ * - Buffed cocinero: Ahora , si el cocinero tiene 1 o 0 de sueño, cuando se le 
+ * de de comer algun personaje, se le restara 2 de hambre y no 1.
  * 
+ * -Cambio en los precios de componentes.
+ *
+ *
+ *
  *
  */
 public class ThisWarOfMine {
@@ -92,8 +98,8 @@ public class ThisWarOfMine {
             System.out.println("Pavel se ha unido al equipo.");
         }
         if (seleccionPersonajes.contains(3)) {
-            Personaje Pavel = new Personaje("Mario", "MERCENARIO");
-            personajes.add(Pavel);
+            Personaje Mario = new Personaje("Mario", "MERCENARIO");
+            personajes.add(Mario);
             System.out.println("Mario se ha unido al equipo.");
         }
 
@@ -132,7 +138,7 @@ public class ThisWarOfMine {
                     System.out.println("0 - Arica - Habilidad: Sigilo - Menos daño al explorar.");
                 }
                 if (!seleccionPersonajes.contains(1)) {
-                    System.out.println("1 - Bruno - Habilidad: Cocinero - Recupera mas hambre al comer.");
+                    System.out.println("1 - Bruno - Habilidad: Cocinero - Recupera mas hambre al comer y mejora la comida si no esta cansado.");
                 }
                 if (!seleccionPersonajes.contains(2)) {
                     System.out.println("2 - Katia - Habilidad: Elocuencia - Sabe negociar mejores gangas.");
@@ -309,17 +315,17 @@ public class ThisWarOfMine {
             }
         } while (validacion == false);
         validacion = false;
-        
+
         //Veo si tenemos armas en el almacen de casa
         //Si la tenemos y su cantidad es 1 o mas indicamos el boolean como true
         for (Objeto objeto : casa.getAlmacen()) {
-            if (objeto.getTipo().equalsIgnoreCase("ARMA")&&objeto.getCantidad()>=1) {
-                
+            if (objeto.getTipo().equalsIgnoreCase("ARMA") && objeto.getCantidad() >= 1) {
+
                 weapon = true;
             }
 
         }
-        
+
         //Si tenemos armas en casa se hace lo siguiente
         if (weapon == true) {
             //Hacemos un do while para seguir preguntando si responde algo que no sea coherente
@@ -328,28 +334,27 @@ public class ThisWarOfMine {
                 System.out.println("Puedes asignarle una arma a " + roles.get(2).getName() + " para que se defienda mientras explora.");
                 System.out.println("Si lo hace recibira menos daño al explorar. (S/N)");
                 decisionWeapon = sc.nextLine();
-            } while (!decisionWeapon.equalsIgnoreCase("S") | !decisionWeapon.equalsIgnoreCase("N"));
-            
+            } while (!decisionWeapon.equalsIgnoreCase("S") && !decisionWeapon.equalsIgnoreCase("N"));
+
             //Si indica que si se hace lo siguiente
             if (decisionWeapon.equalsIgnoreCase("S")) {
                 //Se busca el objeto en el almacen
                 for (Objeto objeto : casa.getAlmacen()) {
                     if (objeto.getTipo().equalsIgnoreCase("ARMA")) {
                         //Se le resta uno en cantidad
-                        objeto.setCantidad(objeto.getCantidad()-1);
-                        
+                        objeto.setCantidad(objeto.getCantidad() - 1);
+
                         //Creamos el objeto 
-                        Objeto arma = new Objeto ("ARMA",1);
+                        Objeto arma = new Objeto("ARMA", 1);
                         //Le añadimos al inventario 
                         roles.get(2).getInventory().add(arma);
-                        System.out.println(roles.get(2).getName()+" se ha llevado una arma para explorar.");
-                        System.out.println("Quedan "+objeto.getCantidad()+" armas en el almacen.");
+                        System.out.println(roles.get(2).getName() + " se ha llevado una arma para explorar.");
+                        System.out.println("Quedan " + objeto.getCantidad() + " armas en el almacen.");
                     }
 
                 }
-            }
-            else{
-                System.out.println(roles.get(2).getName()+" no se ha llevado una arma para explorar.");
+            } else {
+                System.out.println(roles.get(2).getName() + " no se ha llevado una arma para explorar.");
             }
         }
 
@@ -371,11 +376,11 @@ public class ThisWarOfMine {
         boolean muerto = false;
         //Boolean para detectar si tenemos algun mercenario en el equipo
         boolean mercenary = false;
-                
+
         //Miramos el inventario de cada personaje con un for
         for (Personaje personaje : personajes) {
-            if(personaje.getHability().equalsIgnoreCase("MERCENARIO")){
-                mercenary=true;
+            if (personaje.getHability().equalsIgnoreCase("MERCENARIO")) {
+                mercenary = true;
             }
             //Si el inventario no esta vacio procedemos
             if (!personaje.getInventory().isEmpty()) {
@@ -433,28 +438,27 @@ public class ThisWarOfMine {
                     //   2:Gastar 2 de componentes para 1 arma.
                     //Si NO tenemos mercenario en el equipo:
                     //   2:Gastar 3 de componentes para 1 arma.
-                    //3 y 4: Gatsar 5 componentes a cambio de 2 comida o 1 medicina.
-                    //5: Gastar 6 comp a camio de una cama.
+                    // 4: Gatsar 5 componentes a cambio de  2 medicina.
+                    //3 y 5: Gastar 6 comp a camio de una cama o 3 de comida.
                     if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
-                        if(mercenary==false){
-                         if (objeto.getCantidad() >= 3) {
-                            opc = 2;
-                            opcionesFinDia.add(opc);
-                        }   
-                        }
-                        else if(mercenary==true){
-                         if (objeto.getCantidad() >= 2) {
-                            opc = 2;
-                            opcionesFinDia.add(opc);
-                        }   
+                        if (mercenary == false) {
+                            if (objeto.getCantidad() >= 3) {
+                                opc = 2;
+                                opcionesFinDia.add(opc);
+                            }
+                        } else if (mercenary == true) {
+                            if (objeto.getCantidad() >= 2) {
+                                opc = 2;
+                                opcionesFinDia.add(opc);
+                            }
                         }
                         if (objeto.getCantidad() >= 5) {
-                            opc = 3;
-                            opcionesFinDia.add(opc);
                             opc = 4;
                             opcionesFinDia.add(opc);
                         }
                         if (objeto.getCantidad() >= 6) {
+                            opc = 3;
+                            opcionesFinDia.add(opc);
                             opc = 5;
                             opcionesFinDia.add(opc);
                         }
@@ -480,29 +484,28 @@ public class ThisWarOfMine {
                 }
                 System.out.println("---------------------------------------------------");
                 System.out.println("Selecciona la accion que quieras hacer:");
-
+                System.out.println("0)Mostrar almacen.");
                 if (opcionesFinDia.contains(1)) {
                     System.out.println("1) Comer: Gastar 1 de comida a cambio de disminuir en 1 la hambre de un jugador.");
                 }
-                if(mercenary==false){
-                 if (opcionesFinDia.contains(2)) {
-                    System.out.println("2) Generar arma: Gastar 3 componentes a cambio de 1 arma.");
-                }   
+                if (mercenary == false) {
+                    if (opcionesFinDia.contains(2)) {
+                        System.out.println("2) Generar arma: Gastar 3 componentes a cambio de 1 arma.");
+                    }
+                } else if (mercenary == true) {
+                    if (opcionesFinDia.contains(2)) {
+                        System.out.println("2) Generar arma [BOOST MERCENARIO]: Gastar 2 componentes a cambio de 1 arma.");
+                    }
                 }
-                else if(mercenary==true){
-                 if (opcionesFinDia.contains(2)) {
-                    System.out.println("2) Generar arma [BOOST MERCENARIO]: Gastar 2 componentes a cambio de 1 arma.");
-                }   
-                }
-                
+
                 if (opcionesFinDia.contains(3)) {
-                    System.out.println("3) Generar comida: Gastar 5 componentes a cambio de 2 de comida.");
+                    System.out.println("3) Generar comida: Gastar 6 componentes a cambio de 3 de comida.");
                 }
                 if (opcionesFinDia.contains(4)) {
-                    System.out.println("4) Generar medicina: Gatar 5 componentes a cambio de 1 de medicina.");
+                    System.out.println("4) Generar medicina: Gatar 5 componentes a cambio de 2 de medicina.");
                 }
                 if (opcionesFinDia.contains(5)) {
-                    System.out.println("5) Gastar 10 componentes a cambio de crear una cama par la casa.");
+                    System.out.println("5) Gastar 6 componentes a cambio de crear una cama par la casa.");
                 }
                 if (opcionesFinDia.contains(6)) {
                     System.out.println("6) Recuperar salud: Gastar 1 de medicina para aumentar en 1 la salud de un jugador.");
@@ -517,11 +520,16 @@ public class ThisWarOfMine {
                 if (opcionesFinDia.contains(selec)) {
                     //Swicth para redireccionar al metedo escojido
                     switch (selec) {
+                        case 0:
+                            System.out.println("---------------------------------------------------");
+                            System.out.println("ALMACEN:");
+                            casa.mostrarAlmacen();
+                            System.out.println("---------------------------------------------------");
                         case 1:
                             restarHambre(personajes);
                             break;
                         case 2:
-                            generarArma();
+                            generarArma(personajes);
                             break;
                         case 3:
                             generarComida();
@@ -576,6 +584,16 @@ public class ThisWarOfMine {
     public static void restarHambre(ArrayList<Personaje> personajes) {
         Scanner sc = new Scanner(System.in);
 
+        boolean cocinero = false;
+        int indexCocinero = 0;
+
+        for (Personaje personaje : personajes) {
+            if (personaje.getHability().equalsIgnoreCase("COCINERO")) {
+                cocinero = true;
+                indexCocinero = personajes.indexOf(personaje);
+            }
+        }
+
         System.out.println("A que personaje le quieres restar 1 de hambre?");
 
         int n = 0;
@@ -591,39 +609,71 @@ public class ThisWarOfMine {
             //HABILIDAD COCINERO
             if (personajes.get(selec).getHability().equalsIgnoreCase("COCINERO")) {
                 personajes.get(selec).setHunger(personajes.get(selec).getHunger() - 2);
-                System.out.println("Gracias a sus habilidades como cocinero a le ha restado 2 de hambre a " + personajes.get(selec).getName() + ".");
+                System.out.println("Gracias a sus habilidades como cocinero se le ha restado 2 de hambre a " + personajes.get(selec).getName() + ".");
                 for (Objeto objeto : casa.getAlmacen()) {
                     if (objeto.getTipo().equalsIgnoreCase("COMIDA")) {
                         objeto.setCantidad(objeto.getCantidad() - 1);
                     }
                 }
             } else {
-                personajes.get(selec).setHunger(personajes.get(selec).getHunger() - 1);
-                System.out.println("Se le ha restado 1 de hambre a " + personajes.get(selec).getName() + ".");
-                for (Objeto objeto : casa.getAlmacen()) {
-                    if (objeto.getTipo().equalsIgnoreCase("COMIDA")) {
-                        objeto.setCantidad(objeto.getCantidad() - 1);
+                if (personajes.get(indexCocinero).getSleep() <= 1 && cocinero == true) {
+                    personajes.get(selec).setHunger(personajes.get(selec).getHunger() - 2);
+                    System.out.println("Gracias a que "+personajes.get(indexCocinero).getName()+" no esta cansado ha podido cocinar la comida, de esta manera disminuyendo mas el hambre.");
+                    System.out.println("Se le ha restado 2 de hambre a " + personajes.get(selec).getName() + ".");
+                    for (Objeto objeto : casa.getAlmacen()) {
+                        if (objeto.getTipo().equalsIgnoreCase("COMIDA")) {
+                            objeto.setCantidad(objeto.getCantidad() - 1);
+                        }
+                    }
+                } else {
+                    personajes.get(selec).setHunger(personajes.get(selec).getHunger() - 1);
+                    System.out.println("Se le ha restado 1 de hambre a " + personajes.get(selec).getName() + ".");
+                    for (Objeto objeto : casa.getAlmacen()) {
+                        if (objeto.getTipo().equalsIgnoreCase("COMIDA")) {
+                            objeto.setCantidad(objeto.getCantidad() - 1);
+                        }
                     }
                 }
+
             }
         } else {
             System.out.println("Seleccion no valdia.");
         }
     }
 
-    public static void generarArma() {
+    public static void generarArma(ArrayList<Personaje> personajes) {
 
         System.out.println("Generando arma...");
 
         boolean haveGun = false;
 
-        for (Objeto objeto : casa.getAlmacen()) {
-            if (objeto.getTipo().equalsIgnoreCase("ARMA")) {
-                objeto.setCantidad(objeto.getCantidad() + 1);
-                haveGun = true;
+        boolean mercenary = false;
+
+        for (Personaje personaje : personajes) {
+            if (personaje.getHability().equalsIgnoreCase("MERCENARIO")) {
+                mercenary = true;
             }
-            if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
-                objeto.setCantidad(objeto.getCantidad() - 3);
+        }
+
+        if (mercenary == true) {
+            for (Objeto objeto : casa.getAlmacen()) {
+                if (objeto.getTipo().equalsIgnoreCase("ARMA")) {
+                    objeto.setCantidad(objeto.getCantidad() + 1);
+                    haveGun = true;
+                }
+                if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
+                    objeto.setCantidad(objeto.getCantidad() - 2);
+                }
+            }
+        } else {
+            for (Objeto objeto : casa.getAlmacen()) {
+                if (objeto.getTipo().equalsIgnoreCase("ARMA")) {
+                    objeto.setCantidad(objeto.getCantidad() + 1);
+                    haveGun = true;
+                }
+                if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
+                    objeto.setCantidad(objeto.getCantidad() - 3);
+                }
             }
         }
 
@@ -648,16 +698,16 @@ public class ThisWarOfMine {
 
         for (Objeto objeto : casa.getAlmacen()) {
             if (objeto.getTipo().equalsIgnoreCase("COMIDA")) {
-                objeto.setCantidad(objeto.getCantidad() + 2);
+                objeto.setCantidad(objeto.getCantidad() + 3);
                 haveFood = true;
             }
             if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
-                objeto.setCantidad(objeto.getCantidad() - 5);
+                objeto.setCantidad(objeto.getCantidad() - 6);
             }
         }
 
         if (haveFood == false) {
-            Objeto objeto = new Objeto("COMIDA", 1);
+            Objeto objeto = new Objeto("COMIDA", 3);
             casa.getAlmacen().add(objeto);
         }
 
@@ -677,7 +727,7 @@ public class ThisWarOfMine {
 
         for (Objeto objeto : casa.getAlmacen()) {
             if (objeto.getTipo().equalsIgnoreCase("MEDICINA")) {
-                objeto.setCantidad(objeto.getCantidad() + 1);
+                objeto.setCantidad(objeto.getCantidad() + 2);
                 haveMedicine = true;
             }
             if (objeto.getTipo().equalsIgnoreCase("COMPONENTE")) {
@@ -686,7 +736,7 @@ public class ThisWarOfMine {
         }
 
         if (haveMedicine == false) {
-            Objeto objeto = new Objeto("MEDICINA", 1);
+            Objeto objeto = new Objeto("MEDICINA", 2);
             casa.getAlmacen().add(objeto);
         }
 
